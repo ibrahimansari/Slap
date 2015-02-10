@@ -56,7 +56,7 @@ public class Landing extends Activity {
     private double time = System.currentTimeMillis();
 	//Other members
 	private PebbleDataReceiver receiver;
-	private UUID uuid = UUID.fromString("05dd04b7-09e2-49d9-9433-08b7547a68a0");
+	private UUID uuid = UUID.fromString("Insert Here");
 	private Handler handler = new Handler();
     private HashMap<String, Object> params = new HashMap<String, Object>();
 	boolean doIt = true;
@@ -68,7 +68,7 @@ public class Landing extends Activity {
         // Enable Local Datastore.
         Parse.enableLocalDatastore(this);
 
-        Parse.initialize(this, "AYNhSHLFJspugnAcX1ClVwVbkKx1uW3CJRqtu9qw", "vBzikVLaJNzxWVJWpVgBnmyRe2ER0erfdBXjDMFg");
+        Parse.initialize(this, "Insert Your own", "Insert your own");
 
         if(doIt){
 //            ParseUser user = new ParseUser();
@@ -141,7 +141,6 @@ public class Landing extends Activity {
 
 				//Get data
 				latest_data = new int[3 * NUM_SAMPLES];
-				//Log.d("BIG BOOTY HOES GOT SHIT FROM THE PEBBLE", "NEW DATA PACKET");
 				for(int i = 0; i < NUM_SAMPLES; i++) {
 					for(int j = 0; j < 3; j++) {
 						try {
@@ -150,7 +149,6 @@ public class Landing extends Activity {
 							latest_data[(3 * i) + j] = -1;
 						}
 					}
-					//Log.d("OINDRIL IS A GOING TO DRILL THEM BOOTY HOES", "Sample " + i + " data: X: " + latest_data[(3 * i)] + ", Y: " + latest_data[(3 * i) + 1] + ", Z: " + latest_data[(3 * i) + 2]);
 				}
 
 				//Show
@@ -177,15 +175,11 @@ public class Landing extends Activity {
                                 rec.show();
                                 if (System.currentTimeMillis() - time > 1000) {
                                     time=System.currentTimeMillis();
-                                    //Log.d("MYODEBUG", "CALLING CLOUD FUNCTION");
-                                    //ParseGeoPoint point = new ParseGeoPoint(40.0, -30.0);//for first user/device`
-                                    //ParseUser.getCurrentUser().put("location", point);
                                     params.put("timestamp", time);
                                     params.put("location", ParseUser.getCurrentUser().get("location"));
 
                                     ParseCloud.callFunctionInBackground("bumped", params, new FunctionCallback<String>() {
                                         public void done(String nameOfOther, ParseException e) {
-                                            //Log.d("INSIDE THE RUN", "IT WORKS INSIDE");
                                             if (e == null) {
                                                 Log.d("D","NOT NULL");
                                                 if (nameOfOther.length()>0) {
@@ -202,15 +196,12 @@ public class Landing extends Activity {
                                                     startActivity(intent);
 
                                                 } else {
-                                                    //Log.d("MYODEBUG", "NOT FOUND");
                                                 }
                                             } else {
-                                                //Log.d("PARSE EXEP:     ", e.getMessage());
                                             }
 
                                         }
                                     });
-                                    //Log.d("EYYYY IT WORKED!!!", "EYYY Itwerked!");
                                 }
                             }
                             else width = 0;
