@@ -1,8 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <!--
-         Customize dimensions originally defined in res/values/dimens.xml (such as
-         screen margins) for sw600dp devices (e.g. 7" tablets) here.
-    -->
+    <dimen name="myosdk__fragment_scan_window_width">400dp</dimen>
+    <dimen name="myosdk__fragment_scan_window_height">500dp</dimen>
 
 </resources>

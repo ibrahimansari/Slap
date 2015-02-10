@@ -9,14 +9,18 @@ import java.util.UUID;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Contacts;
+import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.getpebble.android.kit.PebbleKit;
 import com.getpebble.android.kit.PebbleKit.PebbleDataReceiver;
@@ -29,12 +33,14 @@ import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
+import com.thalmic.myo.Hub;
+import com.thalmic.myo.Myo;
 
 public class Landing extends Activity {
 	
 	//Constants
 	private static final int NUM_SAMPLES = 15;
-    private ParseUser user = new ParseUser();
+//    private ParseUser user = new ParseUser();
 
     //State
 	private int[] latest_data;
@@ -43,20 +49,17 @@ public class Landing extends Activity {
     ArrayList<Integer> x = new ArrayList<Integer>(), y = new ArrayList<Integer>(), z = new ArrayList<Integer>();
 	
 	//Layout members
-	private TextView 
-		xView,
-		yView,
-		zView,
-        dView;
-	private Button startButton;
+	private TextView title;
+	private Button pebButton, myoButton;
     private int width;
-	
+
+    private double time = System.currentTimeMillis();
 	//Other members
 	private PebbleDataReceiver receiver;
 	private UUID uuid = UUID.fromString("05dd04b7-09e2-49d9-9433-08b7547a68a0");
 	private Handler handler = new Handler();
     private HashMap<String, Object> params = new HashMap<String, Object>();
-	
+	boolean doIt = true;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -67,47 +70,63 @@ public class Landing extends Activity {
 
         Parse.initialize(this, "AYNhSHLFJspugnAcX1ClVwVbkKx1uW3CJRqtu9qw", "vBzikVLaJNzxWVJWpVgBnmyRe2ER0erfdBXjDMFg");
 
-//        user.setUsername("Ibrahim");
-//        user.setPassword("test");
-//        user.setEmail("ibrahim@ibrahim.io");
-
-//        user.signUpInBackground(new SignUpCallback() {
-//            public void done(ParseException e) {
-//                if (e == null) {
-//                    // Hooray! Let them use the app now.
-//                } else {
-//                    // Sign up didn't succeed. Look at the ParseException
-//                    // to figure out what went wrong
+        if(doIt){
+//            ParseUser user = new ParseUser();
+//            user.setUsername("test2");
+//            user.setPassword("test2");
+//
+//            ParseGeoPoint point = new ParseGeoPoint(40.00000012, -30.0);//for first user/device`
+//            user.put("location", point);
+//
+//            user.signUpInBackground(new SignUpCallback() {
+//                public void done(ParseException e) {
+//                    if (e == null) {
+//                        //  Hooray! Let them use the app now.
+//                    } else {
+//                        // Sign up didn't succeed. Look at the ParseException
+//                        // to figure out what went wrong
+//                    }
 //                }
-//            }
-//        });
+//            });
 
-//        ParseUser.logInInBackground("Ibrahim", "test", new LogInCallback() {
-//            public void done(ParseUser user, ParseException e) {
-//                if (user != null) {
-//                    // Hooray! The user is logged in.
-//                } else {
-//                    // Signup failed. Look at the ParseException to see what happened.
-//                }
-//            }
-//        });
+            ParseUser.logInInBackground("ibrahim", "test2", new LogInCallback() {
+                public void done(ParseUser user, ParseException e) {
+                    if (user != null) {
+                        // Hooray! The user is logged in.
+                    } else {
+                        // Signup failed. Look at the ParseException to see what happened.
+                    }
+                }
+            });
+        }
 
-        xView = (TextView)findViewById(R.id.x_view);
-		yView = (TextView)findViewById(R.id.y_view);
-		zView = (TextView)findViewById(R.id.z_view);
-        dView = (TextView)findViewById(R.id.data_view);
-		startButton = (Button)findViewById(R.id.start_button);
-		
-		startButton.setOnClickListener(new OnClickListener() {
-			
+        title = (TextView)findViewById(R.id.title);
+		pebButton = (Button)findViewById(R.id.pebble_button);
+        myoButton = (Button)findViewById(R.id.myo_button);
+
+		pebButton.setOnClickListener(new OnClickListener() {
+
 			@Override
 			public void onClick(View v) {
 				PebbleDictionary dict = new PebbleDictionary();
+                Toast peb = Toast.makeText(getApplicationContext(), "Paired with Pebble", Toast.LENGTH_SHORT);
+                peb.show();
 				dict.addInt32(0, 0);
 				PebbleKit.sendDataToPebble(getApplicationContext(), uuid, dict);
 			}
-			
+
 		});
+
+        myoButton.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                Toast peb = Toast.makeText(getApplicationContext(), "Work in Progress!", Toast.LENGTH_SHORT);
+                peb.show();
+            }
+
+        });
+
 	}
 
 	@Override
@@ -115,14 +134,14 @@ public class Landing extends Activity {
 		super.onResume();
 
 		receiver = new PebbleDataReceiver(uuid) {
-			
+
 			@Override
 			public void receiveData(Context context, int transactionId, PebbleDictionary data) {
 				PebbleKit.sendAckToPebble(getApplicationContext(), transactionId);
-				
+
 				//Get data
 				latest_data = new int[3 * NUM_SAMPLES];
-				Log.d("BIG BOOTY HOES GOT SHIT FROM THE PEBBLE", "NEW DATA PACKET");
+				//Log.d("BIG BOOTY HOES GOT SHIT FROM THE PEBBLE", "NEW DATA PACKET");
 				for(int i = 0; i < NUM_SAMPLES; i++) {
 					for(int j = 0; j < 3; j++) {
 						try {
@@ -131,9 +150,9 @@ public class Landing extends Activity {
 							latest_data[(3 * i) + j] = -1;
 						}
 					}
-					Log.d("OINDRIL IS A GOING TO DRILL THEM BOOTY HOES", "Sample " + i + " data: X: " + latest_data[(3 * i)] + ", Y: " + latest_data[(3 * i) + 1] + ", Z: " + latest_data[(3 * i) + 2]);
+					//Log.d("OINDRIL IS A GOING TO DRILL THEM BOOTY HOES", "Sample " + i + " data: X: " + latest_data[(3 * i)] + ", Y: " + latest_data[(3 * i) + 1] + ", Z: " + latest_data[(3 * i) + 2]);
 				}
-				
+
 				//Show
 				handler.post(new Runnable() {
 					@Override
@@ -152,10 +171,47 @@ public class Landing extends Activity {
                             double mX = mean(x), mY = mean(y), mZ = mean(z);
 
                             width = 0;
-
-                            if (latest_data[2] > mZ + 1.5 * stdZ) {
+                            if (latest_data[2] > mZ + 3.05 * stdZ) {
                                 width++;
-                                Log.d("EYYYY IT WORKED!!!", "EYYY Itwerked!");
+                                Toast rec = Toast.makeText(getApplicationContext(), "Registered Slapp", Toast.LENGTH_LONG);
+                                rec.show();
+                                if (System.currentTimeMillis() - time > 1000) {
+                                    time=System.currentTimeMillis();
+                                    //Log.d("MYODEBUG", "CALLING CLOUD FUNCTION");
+                                    //ParseGeoPoint point = new ParseGeoPoint(40.0, -30.0);//for first user/device`
+                                    //ParseUser.getCurrentUser().put("location", point);
+                                    params.put("timestamp", time);
+                                    params.put("location", ParseUser.getCurrentUser().get("location"));
+
+                                    ParseCloud.callFunctionInBackground("bumped", params, new FunctionCallback<String>() {
+                                        public void done(String nameOfOther, ParseException e) {
+                                            //Log.d("INSIDE THE RUN", "IT WORKS INSIDE");
+                                            if (e == null) {
+                                                Log.d("D","NOT NULL");
+                                                if (nameOfOther.length()>0) {
+                                                    String[] info = nameOfOther.split(":", 3);
+                                                    String phone = info[0];
+                                                    String name = info[1];
+                                                    String email = info[2];
+
+                                                    Intent intent = new Intent(Contacts.Intents.Insert.ACTION);
+                                                    intent.setType(ContactsContract.RawContacts.CONTENT_TYPE);
+                                                    intent.putExtra(Contacts.Intents.Insert.EMAIL, email);
+                                                    intent.putExtra(Contacts.Intents.Insert.PHONE, phone);
+                                                    intent.putExtra(Contacts.Intents.Insert.NAME, name);
+                                                    startActivity(intent);
+
+                                                } else {
+                                                    //Log.d("MYODEBUG", "NOT FOUND");
+                                                }
+                                            } else {
+                                                //Log.d("PARSE EXEP:     ", e.getMessage());
+                                            }
+
+                                        }
+                                    });
+                                    //Log.d("EYYYY IT WORKED!!!", "EYYY Itwerked!");
+                                }
                             }
                             else width = 0;
 //                            else if (spike(latest_data[0], mX, stdX))
@@ -164,28 +220,7 @@ public class Landing extends Activity {
 //                                //handshake
                         }
 
-                        if (width == 1) {
-//                            ParseGeoPoint point = new ParseGeoPoint(40.0, -30.0);//for first user/device`
-//                            user.put("location", point);
-//                            params.put("timestamp", 120120909);
-//                            params.put("location", point);
-//                            ParseCloud.callFunctionInBackground("bumped", params, new FunctionCallback<Boolean>() {
-//                                public void done(Boolean foundAndDone, ParseException e) {
-//                                    if (e == null) {
-//                                        if (foundAndDone) {
-//                                            Log.d("YESSSSS", "YESSSSSSSSS");
-//                                        } else {
-//                                            //show toast about failed bump
-//                                        }
-//                                    }
-//                                }
-//                            });
-                        }
 
-                        xView.setText("X: " + latest_data[0]);
-                        yView.setText("Y: " + latest_data[1]);
-						zView.setText("Z: " + latest_data[2]);
-                        dView.setText("Data: " + width);
 					}
 				});
 			}
