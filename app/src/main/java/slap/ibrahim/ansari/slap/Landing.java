@@ -1,12 +1,5 @@
 package slap.ibrahim.ansari.slap;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.UUID;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -18,7 +11,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,11 +22,11 @@ import com.parse.LogInCallback;
 import com.parse.Parse;
 import com.parse.ParseCloud;
 import com.parse.ParseException;
-import com.parse.ParseGeoPoint;
 import com.parse.ParseUser;
-import com.parse.SignUpCallback;
-import com.thalmic.myo.Hub;
-import com.thalmic.myo.Myo;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.UUID;
 
 public class Landing extends Activity {
 	
@@ -227,8 +219,7 @@ public class Landing extends Activity {
 		unregisterReceiver(receiver);
 	}
 
-    private double stdDev(ArrayList<Integer> array)
-    {
+    private double stdDev(ArrayList<Integer> array) {
         double m = 0.0;
         double num = 0.0;
         m = mean(array);
@@ -248,8 +239,7 @@ public class Landing extends Activity {
         return avg / itr.size();
     }
 
-    private boolean spike(Integer a, double mean, double std)
-    {
+    private boolean spike(Integer a, double mean, double std) {
         return (a.doubleValue() > mean + 2.5 * std || a.doubleValue() < mean - 2.5 * std);
     }
 }

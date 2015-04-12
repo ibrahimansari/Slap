@@ -21,15 +21,13 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:appcompat-v7:21.0.3'
+    compile 'com.android.support:appcompat-v7:22.0.0'
     compile files('libs/GraphView-3.1.1.jar')
-    compile files('libs/pebblekit-2.6.0.jar')
     compile 'com.parse.bolts:bolts-android:1.+'
+    compile 'com.getpebble:pebblekit:3.0.0@aar'
     compile fileTree(dir: 'libs', include: 'Parse-*.jar')
     repositories {
-        maven {
-            url 'C:\\Users\\Ibrahim Ansari\\Downloads\\myo-android-sdk-0.10.0\\myo-android-sdk-0.10.0\\myorepository'
-        }
+        mavenCentral()
+        maven { url "https://oss.sonatype.org/content/groups/public/" }
     }
-    compile('com.thalmic:myosdk:0.10.+@aar')
 }
